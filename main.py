@@ -6,9 +6,10 @@
 #
 # WARNING! All changes made in this file will be lost!
 
-import songdb
 import os
 from PyQt4 import QtCore, QtGui
+import songdb
+import filter
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -70,17 +71,35 @@ class Ui_Dialog(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("Dialog", "Музыка", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("Dialog", "Статистика", None))
 
+def refreshClicked():
+    Dialog = QtGui.QDialog()
+    ui = filter.Ui_Dialog()
+    ui.setupUi(Dialog)
+    
+    #Dialog.setAttribute(QtCore.Qt.WA_DeleteOnClose)
+    result = Dialog.exec_()
+    
+    if result == QtGui.QDialog.Accepted:
+        city = ui.cityEdit.text()
+        age_from = ui.spinBoxAgeFrom.text()
+        age_to = ui.spinBoxAgeTo.text()
+        QtGui.QMessageBox.about(QtGui.QWidget(), "Супер прога", city)
+        return city, age_from, age_to
+     
+    return None
 
 if __name__ == "__main__":
     import sys
     app = QtGui.QApplication(sys.argv)
     
     if not os.path.isfile("music.db"):
-        createDB()
+        songdb.createDB()
     
     Dialog = QtGui.QDialog()
     ui = Ui_Dialog()
     ui.setupUi(Dialog)
+    
+    ui.peopleFilterButton.clicked.connect(refreshClicked)
+	
     Dialog.show()
     sys.exit(app.exec_())
-
