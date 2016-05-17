@@ -39,7 +39,7 @@ def showLoginDialog():
     return None
     
 def getUsersFromCity(api, pcity):
-    return api.get('users.search', city=pcity, count=2, fields='first_name,last_name, sex')
+    return api.users.search(city=pcity, count=2, fields='first_name,last_name, sex')
     
 if __name__ == "__main__":
     import sys
@@ -54,9 +54,13 @@ if __name__ == "__main__":
     
     QtGui.QMessageBox.about(QtGui.QWidget(), "Супер токен", stoken)
     
-    vk = vkontakte.API(token=stoken)
+    #auth_session = vk.AuthSession(app_id=APP_ID, user_login=USER_LOGIN, user_password=USER_PASSWORD)
+    #access_token, _ = auth_session.get_access_token()
+
+    session = vk.Session(access_token=stoken)
+    vkapi = vk.API(session, lang='ru')
     
-    users = getUsersFromCity(vk, 157)
+    users = getUsersFromCity(vkapi, 157)
     
     print(users)
     
