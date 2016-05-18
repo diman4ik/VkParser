@@ -1,4 +1,6 @@
 import os
+import time
+import json
 from PyQt4 import QtCore, QtGui
 import main_form
 import songdb
@@ -39,7 +41,28 @@ def showLoginDialog():
     return None
     
 def getUsersFromCity(api, pcity):
-    return api.users.search(city=pcity, count=2, fields='first_name,last_name, sex')
+    # 365 запросов по всем дням в году - так преодолемм ограничение не больше 1000
+    users = []
+    
+    request_count = 0 # не более 3 в секунду, делаем два и ждем пару сек
+    
+    for m in range(1, 13): # месяцы
+        for d in range(1, 32): #дни
+            result = api.users.search(city=pcity, birth_day=d, birth_month=m, count=2, fields='first_name,last_name, sex, bdate')
+            
+            result = json.loads(result)
+            
+            print(result)
+        
+            users.append()
+            
+            if request_count == 2:
+                time.sleep(2)
+                request_count = 0
+            
+            request_count += 1
+            
+    return users 
     
 if __name__ == "__main__":
     import sys
@@ -52,17 +75,17 @@ if __name__ == "__main__":
     
     (stoken,user_id) = vk_auth.auth(login, password, '5466274', 'audio')
     
-    QtGui.QMessageBox.about(QtGui.QWidget(), "Супер токен", stoken)
+    #QtGui.QMessageBox.about(QtGui.QWidget(), "Супер токен", stoken)
     
-    #auth_session = vk.AuthSession(app_id=APP_ID, user_login=USER_LOGIN, user_password=USER_PASSWORD)
-    #access_token, _ = auth_session.get_access_token()
+    #auth_session = vk.AuthSession(app_id='5466274', user_login=login, user_password=password)
+    #stoken, _ = auth_session.get_access_token()
 
     session = vk.Session(access_token=stoken)
     vkapi = vk.API(session, lang='ru')
     
     users = getUsersFromCity(vkapi, 157)
     
-    print(users)
+    #print(users)
     
     Dialog = QtGui.QDialog()
     ui = main_form.Ui_Dialog()

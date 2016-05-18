@@ -16,8 +16,8 @@ def createDB():
 		
    query = QtSql.QSqlQuery()
 	
-   query.exec_("create table people(id int primary key, vk_id varchar(30), city varchar(60),"
-      "firstname varchar(20), lastname varchar(20))")
+   query.exec_("create table people(id int primary key, vk_id varchar(30), city varchar(60), sex int, age int,"
+      "firstname varchar(25), lastname varchar(25))")
    
    query.exec_("create table songs(id int primary key, performer varchar(50),"
       "songname varchar(100))")
@@ -27,3 +27,6 @@ def createDB():
        "FOREIGN KEY(id_song) REFERENCES songs(id))")
 		
    return True
+   
+def addUser(first_name, second_name, sex, city, age):
+    
