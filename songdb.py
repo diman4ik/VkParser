@@ -28,5 +28,16 @@ def createDB():
 		
    return True
    
-def addUser(first_name, second_name, sex, city, age):
+def addUser(vk_id, first_name, second_name, sex, city, age):
+    QSqlQuery query
+    query.exec("INSERT INTO people (id, vk_id, city, sex, age, firstname, lastname) "
+                   "VALUES (?, ?, ?, ?, ?, ?, ?)")
     
+    query.addBindValue(vk_id.substr(2))
+    query.addBindValue(vk_id)
+    query.addBindValue(city)
+    query.addBindValue(sex)
+    query.addBindValue(age)
+    query.addBindValue(firstname)
+    query.addBindValue(lastname)
+    query.exec()
