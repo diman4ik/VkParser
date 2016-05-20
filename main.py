@@ -48,13 +48,17 @@ def getUsersFromCity(api, pcity):
     
     for m in range(1, 13): # месяцы
         for d in range(1, 32): #дни
-            result = api.users.search(city=pcity, birth_day=d, birth_month=m, count=2, fields='first_name,last_name, sex, bdate')
+            tot_count=2
+            result = api.users.search(city=pcity, birth_day=d, birth_month=m, count=tot_count, fields='first_name,last_name, sex, bdate')
             
-            result = json.loads(result)
+            #result = json.loads(result)
             
-            print(result)
+            #print(result[1])
+            
+            for ind in range(1, len(result) - 1):
+                songdb.addUser(result[ind]['uid'], result[ind]['first_name'], result[ind]['last_name'], result[ind]['sex'], pcity, 50)
         
-            users.append()
+            #users.append()
             
             if request_count == 2:
                 time.sleep(2)
@@ -70,6 +74,18 @@ if __name__ == "__main__":
     
     if not os.path.isfile("music.db"):
         songdb.createDB()
+    else:
+        db = QtSql.QSqlDatabase.addDatabase('QSQLITE')
+        db.setDatabaseName('music.db')
+
+        if not db.open():
+            QtGui.QMessageBox.critical(None, QtGui.qApp.tr("Cannot open database"),
+                QtGui.qApp.tr("Unable to establish a database connection.\n"
+                "This example needs SQLite support. Please read "
+                "the Qt SQL driver documentation for information "
+                "how to build it.\n\n" "Click Cancel to exit."),
+                QtGui.QMessageBox.Cancel)
+            return
     
     login, password = showLoginDialog()
     

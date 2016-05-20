@@ -28,16 +28,33 @@ def createDB():
 		
    return True
    
-def addUser(vk_id, first_name, second_name, sex, city, age):
-    QSqlQuery query
-    query.exec("INSERT INTO people (id, vk_id, city, sex, age, firstname, lastname) "
-                   "VALUES (?, ?, ?, ?, ?, ?, ?)")
+def addUser(vk_id, first_name, last_name, sex, city, age):
+    #db = QtSql.QSqlDatabase.addDatabase('QSQLITE')
+    #db.setDatabaseName('music.db')
+
+    #if not db.open():
+    #  QtGui.QMessageBox.critical(None, QtGui.qApp.tr("Cannot open database"),
+    #     QtGui.qApp.tr("Unable to establish a database connection.\n"
+    #        "This example needs SQLite support. Please read "
+    #        "the Qt SQL driver documentation for information "
+    #        "how to build it.\n\n" "Click Cancel to exit."),
+    #     QtGui.QMessageBox.Cancel)
+            
+    #  return False
+
+    #print("insert")
+      
+    query = QtSql.QSqlQuery()
+    #query.prepare("INSERT INTO people (id, vk_id)"
+    #               " VALUES (30, 40)")
     
-    query.addBindValue(vk_id.substr(2))
-    query.addBindValue(vk_id)
-    query.addBindValue(city)
-    query.addBindValue(sex)
-    query.addBindValue(age)
-    query.addBindValue(firstname)
-    query.addBindValue(lastname)
-    query.exec()
+    #query.addBindValue(vk_id)
+    #query.addBindValue("id" + str(vk_id))
+    #query.addBindValue(city)
+    #query.addBindValue(sex)
+    #query.addBindValue(age)
+    #query.addBindValue(first_name)
+    #query.addBindValue(last_name)
+    #query.addBindValue(last_name)
+    query.exec("INSERT INTO people (id, vk_id)"
+                   " VALUES (30, 40)")

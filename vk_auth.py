@@ -46,7 +46,6 @@ def auth_user(email, password, client_id, scope, opener):
         "client_id=%s&scope=%s&display=wap" % (client_id, ",".join(scope))
         )
     doc = str(response.read())
-    #strdoc = str(doc)
     parser = FormParser()
     parser.feed(doc)
     parser.close()
