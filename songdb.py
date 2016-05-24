@@ -12,7 +12,7 @@ def createDB():
             "how to build it.\n\n" "Click Cancel to exit."),
          QtGui.QMessageBox.Cancel)
 			
-      return False
+      return None
 		
    query = QtSql.QSqlQuery()
 	
@@ -26,12 +26,12 @@ def createDB():
        "FOREIGN KEY(id_user) REFERENCES people(id),"
        "FOREIGN KEY(id_song) REFERENCES songs(id))")
 		
-   return True
+   return db
    
 count = 0
    
-def addUser(vk_id, first_name, last_name, sex, city, age):
-    query = QtSql.QSqlQuery()
+def addUser(db, vk_id, first_name, last_name, sex, city, age):
+    query = QtSql.QSqlQuery(db)
     
     global count
     print("insert " + str(count))

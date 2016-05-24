@@ -40,10 +40,8 @@ def showLoginDialog():
 
     return None
     
-def getUsersFromCity(api, pcity):
-    # 365 запросов по всем дням в году - так преодолемм ограничение не больше 1000
-    users = []
-    
+def getUsersFromCity(db, api, pcity):
+    # 365 запросов по всем дням в году - так преодолемм ограничение не больше 1000    
     request_count = 0 # не более 3 в секунду, делаем два и ждем пару сек
     
     for m in range(1, 4): # месяцы
@@ -56,7 +54,7 @@ def getUsersFromCity(api, pcity):
             print(result)
             
             for ind in range(1, len(result)):
-                songdb.addUser(result[ind]['uid'], result[ind]['first_name'], result[ind]['last_name'], result[ind]['sex'], pcity, 50)
+                songdb.addUser(db, result[ind]['uid'], result[ind]['first_name'], result[ind]['last_name'], result[ind]['sex'], pcity, 50)
         
             #users.append()
             
@@ -65,49 +63,47 @@ def getUsersFromCity(api, pcity):
                 request_count = 0
             
             request_count += 1
-            
-    return users 
+    
+    print("info added")
+    #db.commit()
     
 if __name__ == "__main__":
     import sys
     app = QtGui.QApplication(sys.argv)
     
     if not os.path.isfile("music.db"):
-        songdb.createDB()
+        db = songdb.createDB()
     else:
         db = QtSql.QSqlDatabase.addDatabase('QSQLITE')
         db.setDatabaseName('music.db')
+        
+    if db is None or not db.open():
+        QtGui.QMessageBox.critical(None, QtGui.qApp.tr("Cannot open database"),
+            QtGui.qApp.tr("Unable to establish a database connection.\n"
+            "This example needs SQLite support. Please read "
+            "the Qt SQL driver documentation for information "
+            "how to build it.\n\n" "Click Cancel to exit."),
+            QtGui.QMessageBox.Cancel)
+    else:
+        login, password = showLoginDialog()
+        
+        (stoken,user_id) = vk_auth.auth(login, password, '5466274', 'audio')
+        
+        #QtGui.QMessageBox.about(QtGui.QWidget(), "Супер токен", stoken)
+        
+        #auth_session = vk.AuthSession(app_id='5466274', user_login=login, user_password=password)
+        #stoken, _ = auth_session.get_access_token()
+        
+        print(stoken)
 
-        if not db.open():
-            QtGui.QMessageBox.critical(None, QtGui.qApp.tr("Cannot open database"),
-                QtGui.qApp.tr("Unable to establish a database connection.\n"
-                "This example needs SQLite support. Please read "
-                "the Qt SQL driver documentation for information "
-                "how to build it.\n\n" "Click Cancel to exit."),
-                QtGui.QMessageBox.Cancel)
-            
-    login, password = showLoginDialog()
-    
-    (stoken,user_id) = vk_auth.auth(login, password, '5466274', 'audio')
-    
-    #QtGui.QMessageBox.about(QtGui.QWidget(), "Супер токен", stoken)
-    
-    #auth_session = vk.AuthSession(app_id='5466274', user_login=login, user_password=password)
-    #stoken, _ = auth_session.get_access_token()
-    
-    print(stoken)
-
-    session = vk.Session(access_token=stoken)
-    vkapi = vk.API(session, lang='ru')
-    
-    #profiles = vkapi.users.get(user_id=1)
-    #print(profiles[0]['first_name']+' '+profiles[0]['last_name'])
-    
-    result = vkapi.users.search(city=1, count=2, fields='sex, bdate')
-    
-    print(result)
-    
-    #users = getUsersFromCity(vkapi, 157)
+        session = vk.Session(access_token=stoken)
+        vkapi = vk.API(session, lang='ru')
+        
+        #result = vkapi.users.search(city=157, count=2, fields='sex, bdate')
+        
+        #print(result)
+        
+        users = getUsersFromCity(db, vkapi, 157)
     
     Dialog = QtGui.QDialog()
     ui = main_form.Ui_Dialog()
