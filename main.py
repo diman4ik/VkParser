@@ -1,7 +1,7 @@
 import os
 import time
 import json
-from PyQt4 import QtCore, QtGui
+from PyQt4 import QtCore, QtGui, QtSql
 import main_form
 import songdb
 import login_dialog
@@ -46,16 +46,16 @@ def getUsersFromCity(api, pcity):
     
     request_count = 0 # не более 3 в секунду, делаем два и ждем пару сек
     
-    for m in range(1, 13): # месяцы
-        for d in range(1, 32): #дни
-            tot_count=2
-            result = api.users.search(city=pcity, birth_day=d, birth_month=m, count=tot_count, fields='first_name,last_name, sex, bdate')
+    for m in range(1, 4): # месяцы
+        for d in range(1, 4): #дни
+            tot_count=3
+            result = api.users.search(city=pcity, birth_day=d, birth_month=m, count=tot_count, fields='sex, bdate')
             
             #result = json.loads(result)
             
-            #print(result[1])
+            print(result)
             
-            for ind in range(1, len(result) - 1):
+            for ind in range(1, len(result)):
                 songdb.addUser(result[ind]['uid'], result[ind]['first_name'], result[ind]['last_name'], result[ind]['sex'], pcity, 50)
         
             #users.append()
@@ -85,8 +85,7 @@ if __name__ == "__main__":
                 "the Qt SQL driver documentation for information "
                 "how to build it.\n\n" "Click Cancel to exit."),
                 QtGui.QMessageBox.Cancel)
-            return
-    
+            
     login, password = showLoginDialog()
     
     (stoken,user_id) = vk_auth.auth(login, password, '5466274', 'audio')
@@ -95,13 +94,20 @@ if __name__ == "__main__":
     
     #auth_session = vk.AuthSession(app_id='5466274', user_login=login, user_password=password)
     #stoken, _ = auth_session.get_access_token()
+    
+    print(stoken)
 
     session = vk.Session(access_token=stoken)
     vkapi = vk.API(session, lang='ru')
     
-    users = getUsersFromCity(vkapi, 157)
+    #profiles = vkapi.users.get(user_id=1)
+    #print(profiles[0]['first_name']+' '+profiles[0]['last_name'])
     
-    #print(users)
+    result = vkapi.users.search(city=1, count=2, fields='sex, bdate')
+    
+    print(result)
+    
+    #users = getUsersFromCity(vkapi, 157)
     
     Dialog = QtGui.QDialog()
     ui = main_form.Ui_Dialog()
