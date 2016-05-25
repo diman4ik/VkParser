@@ -106,6 +106,7 @@ if __name__ == "__main__":
         
         getUsersFromCity(vkapi, 157)
         count = songdb.getUsersCount()
+        print(count)
     
     Dialog = QtGui.QDialog()
     ui = main_form.Ui_Dialog()
