@@ -30,21 +30,30 @@ def createDB():
    
 count = 0
    
-def addUser(db, vk_id, first_name, last_name, sex, city, age):
-    query = QtSql.QSqlQuery(db)
+def addUser(vk_id, first_name, last_name, sex, city, age):
+    query = QtSql.QSqlQuery()
     
     global count
     print("insert " + str(count))
     count += 1
     
     query.prepare("INSERT INTO people (id, vk_id, city, sex, age, firstname, lastname)"
-                   " VALUES (?, ?, ?, ?, ?, ?)")
+                   " VALUES (?, ?, ?, ?, ?, ?, ?)")
     
-    query.addBindValue(vk_id)
+    query.addBindValue(int(vk_id))
     query.addBindValue("id" + str(vk_id))
     query.addBindValue(city)
     query.addBindValue(sex)
     query.addBindValue(age)
     query.addBindValue(first_name)
     query.addBindValue(last_name)
+
     query.exec_()
+    
+def getUsersCount():
+    query = QtSql.QSqlQuery()
+    
+    query.prepare("select count(*) from people")
+    query.exec_()
+    query.first()
+    return query.value(0)

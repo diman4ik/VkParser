@@ -1,3 +1,4 @@
+# -*- coding: utf8 -*-
 import os
 import time
 import json
@@ -40,7 +41,7 @@ def showLoginDialog():
 
     return None
     
-def getUsersFromCity(db, api, pcity):
+def getUsersFromCity(api, pcity):
     # 365 запросов по всем дням в году - так преодолемм ограничение не больше 1000    
     request_count = 0 # не более 3 в секунду, делаем два и ждем пару сек
     
@@ -50,14 +51,19 @@ def getUsersFromCity(db, api, pcity):
             result = api.users.search(city=pcity, birth_day=d, birth_month=m, count=tot_count, fields='sex, bdate')
             
             #result = json.loads(result)
-            
             print(result)
             
             for ind in range(1, len(result)):
-                songdb.addUser(db, result[ind]['uid'], result[ind]['first_name'], result[ind]['last_name'], result[ind]['sex'], pcity, 50)
-        
-            #users.append()
+                age = 0
             
+                if 'bdate' in result[ind]:
+                    strage = result[ind]['bdate'].split('.')[-1]
+                    
+                    if len(strage) == 4:
+                        age = 2016 - int(strage)
+            
+                songdb.addUser(result[ind]['uid'], result[ind]['first_name'], result[ind]['last_name'], result[ind]['sex'], pcity, age)
+        
             if request_count == 2:
                 time.sleep(2)
                 request_count = 0
@@ -65,7 +71,6 @@ def getUsersFromCity(db, api, pcity):
             request_count += 1
     
     print("info added")
-    #db.commit()
     
 if __name__ == "__main__":
     import sys
@@ -99,11 +104,8 @@ if __name__ == "__main__":
         session = vk.Session(access_token=stoken)
         vkapi = vk.API(session, lang='ru')
         
-        #result = vkapi.users.search(city=157, count=2, fields='sex, bdate')
-        
-        #print(result)
-        
-        users = getUsersFromCity(db, vkapi, 157)
+        getUsersFromCity(vkapi, 157)
+        count = songdb.getUsersCount()
     
     Dialog = QtGui.QDialog()
     ui = main_form.Ui_Dialog()
