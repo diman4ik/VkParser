@@ -24,7 +24,7 @@ def refreshClicked():
         age_to = ui.spinBoxAgeTo.text()
         QtGui.QMessageBox.about(QtGui.QWidget(), "Супер прога", city)
         return city, age_from, age_to
-     
+        
     return None
     
 def showLoginDialog():
@@ -40,6 +40,17 @@ def showLoginDialog():
         return loginText, passwordText
 
     return None
+    
+progress = None
+    
+def enableAllControls(enable):
+    return False
+    
+def createProgress(dialog):
+    progress = QtGui.QProgressBar(dialog)
+    progress.setGeometry(200, 80, 250, 20)
+    progress.move(450, 400)
+    progress.setValue(50)
     
 def getUsersFromCity(api, pcity):
     # 365 запросов по всем дням в году - так преодолемм ограничение не больше 1000    
@@ -104,13 +115,15 @@ if __name__ == "__main__":
         session = vk.Session(access_token=stoken)
         vkapi = vk.API(session, lang='ru')
         
-        getUsersFromCity(vkapi, 157)
+        #getUsersFromCity(vkapi, 157)
         count = songdb.getUsersCount()
         print(count)
     
     Dialog = QtGui.QDialog()
     ui = main_form.Ui_Dialog()
     ui.setupUi(Dialog)
+    
+    createProgress(Dialog)
     
     ui.peopleFilterButton.clicked.connect(refreshClicked)
 	
