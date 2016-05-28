@@ -62,21 +62,21 @@ def getUsersFromCity(api, pcity):
     for m in range(1, 4): # месяцы
         for d in range(1, 4): #дни
             tot_count=3
-            #result = api.users.search(city=pcity, birth_day=d, birth_month=m, count=tot_count, fields='sex, bdate')
+            result = api.users.search(city=pcity, birth_day=d, birth_month=m, count=tot_count, fields='sex, bdate')
             
             #result = json.loads(result)
             #print(result)
             
-            #for ind in range(1, len(result)):
-            #    age = 0
+            for ind in range(1, len(result)):
+                age = 0
             
-            #    if 'bdate' in result[ind]:
-            #        strage = result[ind]['bdate'].split('.')[-1]
+                if 'bdate' in result[ind]:
+                    strage = result[ind]['bdate'].split('.')[-1]
                     
-            #        if len(strage) == 4:
-            #            age = 2016 - int(strage)
+                    if len(strage) == 4:
+                        age = 2016 - int(strage)
             
-                #songdb.addUser(result[ind]['uid'], result[ind]['first_name'], result[ind]['last_name'], result[ind]['sex'], pcity, age)
+                songdb.addUser(result[ind]['uid'], result[ind]['first_name'], result[ind]['last_name'], result[ind]['sex'], pcity, age)
         
             if request_count == 2:
                 time.sleep(2)
@@ -87,8 +87,7 @@ def getUsersFromCity(api, pcity):
             
             request_count += 1
             done_requests += 1
-    
-    print("info added")
+
     
 if __name__ == "__main__":
     import sys
@@ -134,6 +133,9 @@ if __name__ == "__main__":
         print(count)
         progress.hide()
     
-    ui.peopleFilterButton.clicked.connect(refreshClicked)
+        ui.peopleFilterButton.clicked.connect(refreshClicked)
+    
+        users = songdb.selectUsers()
+        ui.listPeople.setModel(users)
 	
     sys.exit(app.exec_())
