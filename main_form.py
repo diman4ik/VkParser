@@ -47,7 +47,7 @@ class Ui_Dialog(object):
         self.listPeople.setGeometry(QtCore.QRect(10, 40, 501, 751))
         self.listPeople.setObjectName(_fromUtf8("listPeople"))
         self.labelPeople = QtGui.QLabel(self.tab)
-        self.labelPeople.setGeometry(QtCore.QRect(10, 10, 62, 15))
+        self.labelPeople.setGeometry(QtCore.QRect(10, 10, 291, 16))
         self.labelPeople.setObjectName(_fromUtf8("labelPeople"))
         self.listMusic = QtGui.QListView(self.tab)
         self.listMusic.setGeometry(QtCore.QRect(530, 140, 581, 651))

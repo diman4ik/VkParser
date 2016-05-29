@@ -9,6 +9,8 @@ import login_dialog
 import filter
 import vk_auth
 import vk
+import threading
+
 
 def refreshClicked():
     Dialog = QtGui.QDialog()
@@ -71,12 +73,12 @@ def getUsersFromCity(api, pcity):
     # 365 запросов по всем дням в году - так преодолемм ограничение не больше 1000    
     request_count = 0 # не более 3 в секунду, делаем два и ждем пару сек
     
-    total_requests = 27
+    total_requests = 360
     done_requests = 0
     
-    for m in range(1, 4): # месяцы
-        for d in range(1, 4): #дни
-            tot_count=3
+    for m in range(1, 13): # месяцы
+        for d in range(1, 32): #дни
+            tot_count=10
             result = api.users.search(city=pcity, birth_day=d, birth_month=m, count=tot_count, fields='sex, bdate')
             
             #result = json.loads(result)
@@ -94,7 +96,7 @@ def getUsersFromCity(api, pcity):
                 songdb.addUser(result[ind]['uid'], result[ind]['first_name'], result[ind]['last_name'], result[ind]['sex'], pcity, age)
         
             if request_count == 2:
-                time.sleep(2)
+                time.sleep(5)
                 request_count = 0
                 
                 global progress
@@ -102,6 +104,12 @@ def getUsersFromCity(api, pcity):
             
             request_count += 1
             done_requests += 1
+            
+def getUsersInThread(api, city):
+    t1 = threading.Thread(target = getUsersFromCity, args = (api, city))
+    t1.start()
+    t1.join()
+    
             
 if __name__ == "__main__":
     import sys
@@ -144,7 +152,9 @@ if __name__ == "__main__":
         
         getUsersFromCity(vkapi, 157)
         count = songdb.getUsersCount()
-        print(count)
+        
+        ui.labelPeople.setText("Люди (" + str(count) + ")")
+
         progress.hide()
     
         ui.peopleFilterButton.clicked.connect(refreshClicked)
