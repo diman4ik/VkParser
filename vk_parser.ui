@@ -63,7 +63,7 @@
       </rect>
      </property>
     </widget>
-    <widget class="QLabel" name="label">
+    <widget class="QLabel" name="labelPeople">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -86,7 +86,7 @@
       </rect>
      </property>
     </widget>
-    <widget class="QLabel" name="label_2">
+    <widget class="QLabel" name="labelSongs">
      <property name="geometry">
       <rect>
        <x>530</x>
@@ -110,6 +110,19 @@
      </property>
      <property name="text">
       <string>Обновить</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="userLabel">
+     <property name="geometry">
+      <rect>
+       <x>540</x>
+       <y>10</y>
+       <width>561</width>
+       <height>81</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
      </property>
     </widget>
    </widget>

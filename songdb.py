@@ -60,6 +60,6 @@ def getUsersCount():
 
 def selectUsers():
     model = QtSql.QSqlQueryModel()
-    model.setQuery("SELECT vk_id || ' ' || firstname || ' ' || lastname FROM people order by id")
+    model.setQuery("SELECT vk_id || ' ' || firstname || ' ' || lastname, vk_id, city, sex, age  FROM people order by id")
     #model.setQuery("SELECT * FROM people order by id")
     return model

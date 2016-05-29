@@ -41,8 +41,23 @@ def showLoginDialog():
 
     return None
     
-progress = None
+def peopleListClicked(index):
+    row = index.row()
+    global users
+    rec = users.record(row)
     
+    gender = ""
+    
+    if rec.value(3) == 1:
+        gender = " пол: жен"
+    else:
+        gender = " пол: муж"
+    
+    global ui
+    ui.userLabel.setText(rec.value(0) + ", " + gender + ", " + str(rec.value(4)) + " лет" )
+
+progress = None
+
 def enableAllControls(enable):
     return False
     
@@ -87,8 +102,7 @@ def getUsersFromCity(api, pcity):
             
             request_count += 1
             done_requests += 1
-
-    
+            
 if __name__ == "__main__":
     import sys
     app = QtGui.QApplication(sys.argv)
@@ -137,5 +151,7 @@ if __name__ == "__main__":
     
         users = songdb.selectUsers()
         ui.listPeople.setModel(users)
+        
+        ui.listPeople.clicked.connect(peopleListClicked)
 	
     sys.exit(app.exec_())
