@@ -69,7 +69,7 @@ def createProgress(dialog):
     progress.setGeometry(200, 80, 250, 20)
     progress.move(450, 400)
     
-def getUsersFromCity(api, pcity):
+def getUsersFromCity(api, pcity, complete):
     # 365 запросов по всем дням в году - так преодолемм ограничение не больше 1000    
     request_count = 0 # не более 3 в секунду, делаем два и ждем пару сек
     
@@ -77,7 +77,7 @@ def getUsersFromCity(api, pcity):
     done_requests = 0
     
     for m in range(1, 13): # месяцы
-        for d in range(1, 32): #дни
+        for d in range(1, 4): #дни
             tot_count=10
             result = api.users.search(city=pcity, birth_day=d, birth_month=m, count=tot_count, fields='sex, bdate')
             
@@ -96,7 +96,7 @@ def getUsersFromCity(api, pcity):
                 songdb.addUser(result[ind]['uid'], result[ind]['first_name'], result[ind]['last_name'], result[ind]['sex'], pcity, age)
         
             if request_count == 2:
-                time.sleep(5)
+                time.sleep(7)
                 request_count = 0
                 
                 global progress
@@ -104,11 +104,31 @@ def getUsersFromCity(api, pcity):
             
             request_count += 1
             done_requests += 1
+    
+    if complete != None:
+        complete()
             
-def getUsersInThread(api, city):
-    t1 = threading.Thread(target = getUsersFromCity, args = (api, city))
+def getUsersFromGroup(api, groupid):
+    return None
+            
+def getUsersInThread(api, city, complete):
+    t1 = threading.Thread(target = getUsersFromCity, args = (api, city, complete))
     t1.start()
-    t1.join()
+    #t1.join()
+    
+def onLoadComplete():
+    count = songdb.getUsersCount()
+        
+    ui.labelPeople.setText("Люди (" + str(count) + ")")
+
+    progress.hide()
+    
+    ui.peopleFilterButton.clicked.connect(refreshClicked)
+    
+    users = songdb.selectUsers()
+    ui.listPeople.setModel(users)
+        
+    ui.listPeople.clicked.connect(peopleListClicked)
     
             
 if __name__ == "__main__":
@@ -150,18 +170,20 @@ if __name__ == "__main__":
         session = vk.Session(access_token=stoken)
         vkapi = vk.API(session, lang='ru')
         
-        getUsersFromCity(vkapi, 157)
-        count = songdb.getUsersCount()
+        getUsersInThread(vkapi, 157, onLoadComplete)
         
-        ui.labelPeople.setText("Люди (" + str(count) + ")")
+        #getUsersFromCity(vkapi, 157, onLoadComplete)
+        #count = songdb.getUsersCount()
+        
+        #ui.labelPeople.setText("Люди (" + str(count) + ")")
 
-        progress.hide()
+        #progress.hide()
     
-        ui.peopleFilterButton.clicked.connect(refreshClicked)
+        #ui.peopleFilterButton.clicked.connect(refreshClicked)
     
-        users = songdb.selectUsers()
-        ui.listPeople.setModel(users)
+        #users = songdb.selectUsers()
+        #ui.listPeople.setModel(users)
         
-        ui.listPeople.clicked.connect(peopleListClicked)
+        #ui.listPeople.clicked.connect(peopleListClicked)
 	
     sys.exit(app.exec_())
