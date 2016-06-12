@@ -10,6 +10,7 @@ import filter
 import vk_auth
 import vk
 import threading
+import utils
 
 
 def refreshClicked():
@@ -107,6 +108,16 @@ def getUsersFromCity(api, pcity, complete):
     
     if complete != None:
         complete()
+        
+def getMusicForUsers(api, userids, complete):
+    codestrs = utils.getCodeStrs(userids)
+    
+    for str in codestrs:
+        result = api.execute(code=str)
+        print(result)
+        
+    if complete != None:
+        complete()
             
 def getUsersFromGroup(api, groupid):
     return None
@@ -170,7 +181,9 @@ if __name__ == "__main__":
         session = vk.Session(access_token=stoken)
         vkapi = vk.API(session, lang='ru')
         
-        getUsersInThread(vkapi, 157, onLoadComplete)
+        #getUsersInThread(vkapi, 157, onLoadComplete)
+        
+        getMusicForUsers(vkapi, ['18727902', '87550013', '273280119'], None)
         
         #getUsersFromCity(vkapi, 157, onLoadComplete)
         #count = songdb.getUsersCount()
